@@ -22,7 +22,8 @@ GLOBAL_STYLE = f"""
         color: {LIGHT_BLUE};
         font-family: Georgia;
         font-size: 14px;
-        padding: 8px 16px;
+        padding: 8px 24px;
+        min-width: 120px;
         border: 1px solid {FAINT_LINE};
         border-bottom-color: {FAINT_LINE};
         border-top-left-radius: 6px;
