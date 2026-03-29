@@ -60,7 +60,7 @@ class WaveletDenoisingTab(QWidget):
             }}
             QLabel {{ 
                 color: {TEXT_DARK}; 
-                font-family: 'Segoe UI', Arial; 
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
                 font-size: 12px; 
             }}
             QComboBox {{
