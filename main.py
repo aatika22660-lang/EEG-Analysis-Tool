@@ -13,11 +13,12 @@ except ImportError:
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
                              QTabWidget, QToolBar, QAction, QFileDialog, 
-                             QStatusBar, QMessageBox, QInputDialog)
+                             QStatusBar, QMessageBox, QInputDialog, QStackedWidget)
 from PyQt5.QtCore import Qt
 
 from state import app_state
 from theme import GLOBAL_STYLE
+from landing_page import LandingPage
 
 # Import Tabs
 from tabs.visualization_tab import VisualizationTab
@@ -41,6 +42,15 @@ class EEGApp(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         main_layout = QVBoxLayout(central)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Stacked widget: landing page (index 0) ↔ tabs (index 1)
+        self.stack = QStackedWidget()
+        
+        # Landing Page
+        self.landing = LandingPage()
+        self.landing.on_load_clicked = self.load_signal
+        self.stack.addWidget(self.landing)   # index 0
         
         # Tabs
         self.tabs = QTabWidget()
@@ -56,7 +66,9 @@ class EEGApp(QMainWindow):
         self.tabs.addTab(self.compare_tab, "Comparison")
         self.tabs.addTab(self.merge_tab, "Signal Merging")
         
-        main_layout.addWidget(self.tabs)
+        self.stack.addWidget(self.tabs)      # index 1
+        
+        main_layout.addWidget(self.stack)
         
         # Status Bar
         self.statusBar = QStatusBar()
@@ -113,7 +125,11 @@ class EEGApp(QMainWindow):
             fs = app_state["sampling_rate"]
             self.statusBar.showMessage(f"Loaded: {filename} | Sampling Rate: {fs} Hz")
             
+            # Switch from landing page to tabs view
+            self.stack.setCurrentIndex(1)
+            
             # TODO: partner - call update plots across all tabs here when data is loaded
+            self.vis_tab.load_new_file()
             
         except Exception as e:
             QMessageBox.critical(self, "Error Loading File", f"Could not load {file_path}:\n{str(e)}")
