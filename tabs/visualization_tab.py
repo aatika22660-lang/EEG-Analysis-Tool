@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import traceback
 import numpy as np
 
-from theme import CREAM, DUSTY_BLUE, PANEL_BG, LIGHT_BLUE, TEXT_DARK, FAINT_LINE
+from theme import CREAM, DUSTY_BLUE, PANEL_BG, LIGHT_BLUE, TEXT_DARK, FAINT_LINE, SIGNAL_COLORS
 from matlab_bridge import run_visualize
 
 class VisualizationTab(QWidget):
@@ -166,12 +166,10 @@ class VisualizationTab(QWidget):
             return
             
         self._clear_axes()
-        colors = ['#824CB3', '#F73838', '#5AED5A', '#EED822', '#44C6F4', '#FCA048', '#21436A']
         
         selected = self.channel_selector.currentText()
         if selected == "All Channels":
-            num_to_plot = min(len(colors), len(self.channel_names))
-            indices = list(range(num_to_plot))
+            indices = list(range(len(self.channel_names)))
         else:
             try:
                 idx = list(self.channel_names).index(selected)
@@ -187,11 +185,9 @@ class VisualizationTab(QWidget):
         mask = (self.time_axis >= start_t) & (self.time_axis <= end_t)
         t_ax_slice = self.time_axis[mask]
         
-        # TODO: partner plugs in here
-        
         # Time Domain Plot (SLICED)
         for ch_idx in indices:
-            c = colors[ch_idx % len(colors)]
+            c = SIGNAL_COLORS[ch_idx % len(SIGNAL_COLORS)]
             self.time_ax.plot(t_ax_slice, self.time_data[ch_idx][mask], color=c, label=str(self.channel_names[ch_idx]), linewidth=1)
             
         self.time_ax.set_title("Time Domain", color='black', pad=10)
@@ -208,7 +204,7 @@ class VisualizationTab(QWidget):
             
         # Frequency Domain Plot (FULL)
         for ch_idx in indices:
-            c = colors[ch_idx % len(colors)]
+            c = SIGNAL_COLORS[ch_idx % len(SIGNAL_COLORS)]
             self.freq_ax.plot(self.freq_axis, self.freq_data[ch_idx], color=c, label=str(self.channel_names[ch_idx]), linewidth=1)
             
         self.freq_ax.set_title("Frequency Domain (PSD)", color='black', pad=10)

@@ -8,6 +8,17 @@ LIGHT_BLUE = "#A3B0C8"
 FAINT_LINE = "#C8CCD4"
 TEXT_DARK  = "#5A6A8C"
 
+# Consistent bold hues for EEG traces
+SIGNAL_COLORS = [
+    '#824CB3',  # Vivid Purple
+    '#F73838',  # Bright Red
+    '#5AED5A',  # Lime Green
+    '#EED822',  # Bright Yellow
+    '#44C6F4',  # Cyan/Sky Blue
+    '#FCA048',  # Orange
+    '#21436A'   # Dark Blue
+]
+
 GLOBAL_STYLE = f"""
     QMainWindow {{
         background-color: {CREAM};

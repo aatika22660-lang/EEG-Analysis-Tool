@@ -106,10 +106,37 @@ class EEGApp(QMainWindow):
                 
             elif file_path.endswith('.mat'):
                 mat = sio.loadmat(file_path)
-                # Partner to handle exact matrix unpacking based on their specific MAT structure conventions
-                app_state["raw_signal"] = mat.get('val', mat.get('data', None)) 
-                app_state["sampling_rate"] = mat.get('fs', [[250]])[0][0]
-                app_state["channel_names"] = [f"Ch{i+1}" for i in range(app_state["raw_signal"].shape[0] if app_state["raw_signal"] is not None else 0)]
+                
+                # Attempt to find signal in common keys
+                raw_signal = mat.get('val', mat.get('data', mat.get('signal', None)))
+                
+                # If not found, look for any 2D numeric array (ignoring metadata)
+                if raw_signal is None:
+                    for key, val in mat.items():
+                        if not key.startswith('__') and hasattr(val, 'shape') and len(val.shape) == 2:
+                            raw_signal = val
+                            break
+                            
+                app_state["raw_signal"] = raw_signal
+                
+                # Handle sampling rate: check 'fs', 'sampling_rate', or default 250
+                fs_val = mat.get('fs', mat.get('sampling_rate', [[250]]))
+                if isinstance(fs_val, (int, float)):
+                    app_state["sampling_rate"] = fs_val
+                else:
+                    try:
+                        app_state["sampling_rate"] = float(np.array(fs_val).flatten()[0])
+                    except:
+                        app_state["sampling_rate"] = 250
+                
+                if app_state["raw_signal"] is not None:
+                    # Determine channel count (smaller dimension typically)
+                    # If 122880 x 16, then 16 is likely the channels
+                    r, c = app_state["raw_signal"].shape
+                    num_channels = min(r, c)
+                    app_state["channel_names"] = [f"Ch{i+1}" for i in range(num_channels)]
+                else:
+                    raise Exception("No valid EEG signal array found in .mat file.")
                 
             elif file_path.endswith('.edf'):
                 if not MNE_AVALIABLE:
