@@ -99,9 +99,25 @@ class EEGApp(QMainWindow):
             
         try:
             if file_path.endswith('.csv'):
-                df = pd.read_csv(file_path)
+                # Peek at headers
+                df_headers = pd.read_csv(file_path, nrows=0)
+                
+                def is_numeric(s):
+                    try:
+                        float(s)
+                        return True
+                    except (ValueError, TypeError):
+                        return False
+                
+                # If all headers look numeric, they are likely data
+                if all(is_numeric(col) for col in df_headers.columns):
+                    df = pd.read_csv(file_path, header=None)
+                    app_state["channel_names"] = [f"Ch{i+1}" for i in range(df.shape[1])]
+                else:
+                    df = pd.read_csv(file_path)
+                    app_state["channel_names"] = list(df.columns)
+                
                 app_state["raw_signal"] = df.values
-                app_state["channel_names"] = list(df.columns)
                 app_state["sampling_rate"] = 250  # Default assumption if CSV doesn't store FS
                 
             elif file_path.endswith('.mat'):
