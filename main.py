@@ -157,6 +157,10 @@ class EEGApp(QMainWindow):
             
             # TODO: partner - call update plots across all tabs here when data is loaded
             self.vis_tab.load_new_file()
+            self.wavelet_tab.load_new_file()
+            # other tabs still in prototype, but adding calls as they're implemented
+            # self.adaptive_tab.load_new_file() 
+            # self.compare_tab.load_new_file()
             
         except Exception as e:
             QMessageBox.critical(self, "Error Loading File", f"Could not load {file_path}:\n{str(e)}")

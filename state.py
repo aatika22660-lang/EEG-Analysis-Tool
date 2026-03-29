@@ -4,6 +4,7 @@ app_state = {
     "raw_signal": None,
     "sampling_rate": None,
     "channel_names": [],
+    "time_axis": None,
     "processed_wavelet": None,
     "processed_adaptive": None
 }

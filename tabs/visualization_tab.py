@@ -123,6 +123,7 @@ class VisualizationTab(QWidget):
             self.freq_data = f_dt
             self.freq_axis = f_ax
             self.time_axis = t_ax
+            self.app_state["time_axis"] = t_ax
             self.channel_names = c_names
             self.is_loaded = True
             self.error_msg = None
